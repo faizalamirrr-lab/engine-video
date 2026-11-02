@@ -46,14 +46,14 @@
       position: absolute; inset: -80px;
       background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 36px 36px; animation: gridMove 6s linear infinite; pointer-events: none;
+      background-size: 36px 36px; animation: gridMove 8s linear infinite; pointer-events: none;
     }
     @keyframes gridMove { 0% { transform: translate(0,0); } 100% { transform: translate(-36px,-36px); } }
 
     .ambient-glow {
       position: absolute; width: 280px; height: 280px; border-radius: 50%;
       filter: blur(65px); opacity: 0.45; top: 16%; left: 10%; pointer-events: none;
-      transition: background 0.5s ease; animation: pulseGlow 3s ease-in-out infinite alternate;
+      transition: background 0.5s ease; animation: pulseGlow 4s ease-in-out infinite alternate;
     }
     @keyframes pulseGlow { 0% { transform: scale(0.9); } 100% { transform: scale(1.15); } }
 
@@ -84,8 +84,8 @@
       justify-content: center; align-items: center; margin-bottom: 20px;
     }
     .mc-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .svg-spin { transform-origin: 100px 100px; animation: spin 12s linear infinite; }
-    .svg-spin-rev { transform-origin: 100px 100px; animation: spinRev 9s linear infinite; }
+    .svg-spin { transform-origin: 100px 100px; animation: spin 14s linear infinite; }
+    .svg-spin-rev { transform-origin: 100px 100px; animation: spinRev 10s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
@@ -143,12 +143,12 @@
 
   <script>
     window.DATA_VIDEO = [
-      { durasi: 3.5, warnaAksen: "#38bdf8", bg: "radial-gradient(circle at 50% 30%, #0f172a, #020617)", kategori: "SIMULASI SAINS", ikon: "🌍", angkaTarget: 5, satuan: " DETIK", teksUtama: "BUMI TANPA OKSIGEN?", subTeks: "Bukan cuma soal napas, struktur bumi akan hancur seketika!", efekKamera: "zoomIn" },
-      { durasi: 4.5, warnaAksen: "#facc15", bg: "radial-gradient(circle at 50% 30%, #450a0a, #090202)", kategori: "DETIK KE-1 // STRUKTUR", ikon: "🏢", angkaTarget: 100, satuan: "% RUNTUH", teksUtama: "GEDUNG BETON MENJADI DEBU", subTeks: "Oksigen adalah pengikat utama molekul beton di seluruh dunia.", efekKamera: "shake" },
+      { durasi: 4.5, warnaAksen: "#38bdf8", bg: "radial-gradient(circle at 50% 30%, #0f172a, #020617)", kategori: "SIMULASI SAINS", ikon: "🌍", angkaTarget: 5, satuan: " DETIK", teksUtama: "BUMI TANPA OKSIGEN?", subTeks: "Bukan cuma soal napas, struktur bumi akan hancur seketika!", efekKamera: "zoomIn" },
+      { durasi: 5.0, warnaAksen: "#facc15", bg: "radial-gradient(circle at 50% 30%, #450a0a, #090202)", kategori: "DETIK KE-1 // STRUKTUR", ikon: "🏢", angkaTarget: 100, satuan: "% RUNTUH", teksUtama: "GEDUNG BETON MENJADI DEBU", subTeks: "Oksigen adalah pengikat utama molekul beton di seluruh dunia.", efekKamera: "shake" },
       { durasi: 5.0, warnaAksen: "#a855f7", bg: "radial-gradient(circle at 50% 30%, #1e1b4b, #030108)", kategori: "DETIK KE-2 // ATMOSFER", ikon: "🌌", angkaTarget: 0, satuan: " CAHAYA", teksUtama: "LANGIT SIANG GELAP GULITA", subTeks: "Partikel udara berkurang 21%, cahaya matahari gagal dipantulkan.", efekKamera: "panRight" },
-      { durasi: 4.5, warnaAksen: "#f43f5e", bg: "radial-gradient(circle at 50% 30%, #3b0764, #090314)", kategori: "DETIK KE-3 // MESIN", ikon: "✈️", angkaTarget: 0, satuan: " PEMBAKARAN", teksUtama: "KENDARAAN & PESAWAT MATI", subTeks: "Tanpa oksigen, tidak ada api di mesin pembakaran internal.", efekKamera: "zoomOut" },
-      { durasi: 4.5, warnaAksen: "#fb923c", bg: "radial-gradient(circle at 50% 30%, #7c2d12, #0c0401)", kategori: "DETIK KE-4 // RADIASI", ikon: "☀️", angkaTarget: 300, satuan: "% UV EKSTREM", teksUtama: "LAPISAN OZON LENYAP", subTeks: "Ozon terbuat dari 3 atom oksigen. Kulit langsung terbakar!", efekKamera: "shake" },
-      { durasi: 4.0, warnaAksen: "#2dd4bf", bg: "radial-gradient(circle at 50% 30%, #064e3b, #02120e)", kategori: "KESIMPULAN AKHIR", ikon: "🧬", angkaTarget: 21, satuan: "% OKSIGEN", teksUtama: "BISAKAH KITA SELAMAT?", subTeks: "Tulis pendapatmu di kolom komentar di bawah!", efekKamera: "zoomIn" }
+      { durasi: 5.0, warnaAksen: "#f43f5e", bg: "radial-gradient(circle at 50% 30%, #3b0764, #090314)", kategori: "DETIK KE-3 // MESIN", ikon: "✈️", angkaTarget: 0, satuan: " PEMBAKARAN", teksUtama: "KENDARAAN & PESAWAT MATI", subTeks: "Tanpa oksigen, tidak ada api di mesin pembakaran internal.", efekKamera: "zoomOut" },
+      { durasi: 5.0, warnaAksen: "#fb923c", bg: "radial-gradient(circle at 50% 30%, #7c2d12, #0c0401)", kategori: "DETIK KE-4 // RADIASI", ikon: "☀️", angkaTarget: 300, satuan: "% UV EKSTREM", teksUtama: "LAPISAN OZON LENYAP", subTeks: "Ozon terbuat dari 3 atom oksigen. Kulit langsung terbakar!", efekKamera: "shake" },
+      { durasi: 4.5, warnaAksen: "#2dd4bf", bg: "radial-gradient(circle at 50% 30%, #064e3b, #02120e)", kategori: "KESIMPULAN AKHIR", ikon: "🧬", angkaTarget: 21, satuan: "% OKSIGEN", teksUtama: "BISAKAH KITA SELAMAT?", subTeks: "Tulis pendapatmu di kolom komentar di bawah!", efekKamera: "zoomIn" }
     ];
 
     const inputEl = document.getElementById('json-input');
@@ -168,7 +168,7 @@
       clearTimeout(sceneTimer); clearTimeout(exitTimer); cancelAnimationFrame(rafId);
 
       const s = scenes[index];
-      const durasiMs = (s.durasi || 4) * 1000;
+      const durasiMs = (Math.max(4.0, s.durasi || 4.5)) * 1000; // Minimal 4 detik per scene
       const aksen = s.warnaAksen || "#38bdf8";
 
       document.getElementById('viewport').style.background = s.bg || "#070a12";
@@ -219,29 +219,29 @@
         cam.animate([{ transform: 'scale(0.92)' }, { transform: 'scale(1.08)' }], { duration: durasiMs, fill: 'forwards' });
       }
 
-      // Animasi Elemen (Spring Curves)
+      // Animasi Masuk (Lebih Stabil & Smooth)
       document.getElementById('el-tag').animate([
-        { opacity: 0, transform: 'translateY(-25px) scale(0.8)' },
+        { opacity: 0, transform: 'translateY(-20px) scale(0.9)' },
         { opacity: 1, transform: 'translateY(0) scale(1)' }
-      ], { duration: 500, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
+      ], { duration: 400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
 
       document.getElementById('ring-draw').animate([
         { strokeDashoffset: 480 }, { strokeDashoffset: 75 }
-      ], { duration: 1100, delay: 100, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+      ], { duration: 1000, delay: 100, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
 
       const iconEl = document.getElementById('el-icon');
       iconEl.animate([
-        { opacity: 0, transform: 'scale(0.1) rotate(-30deg)' },
-        { opacity: 1, transform: 'scale(1.18) rotate(6deg)', offset: 0.65 },
+        { opacity: 0, transform: 'scale(0.2) rotate(-20deg)' },
+        { opacity: 1, transform: 'scale(1.1) rotate(4deg)', offset: 0.6 },
         { opacity: 1, transform: 'scale(1) rotate(0deg)' }
-      ], { duration: 750, delay: 120, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
+      ], { duration: 600, delay: 150, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
 
-      // Counter Angka 60FPS
+      // Counter Angka
       if (s.angkaTarget !== undefined) {
         const numEl = document.getElementById('num-val');
         const t0 = performance.now();
         function tick(now) {
-          const p = Math.min(1, (now - t0) / 1000);
+          const p = Math.min(1, (now - t0) / 900);
           const ease = 1 - Math.pow(1 - p, 3);
           if (numEl) numEl.innerText = Math.round(s.angkaTarget * ease);
           if (p < 1) rafId = requestAnimationFrame(tick);
@@ -249,31 +249,30 @@
         rafId = requestAnimationFrame(tick);
       }
 
-      // Masking Kata per Kata
+      // Masking Kata (Muncul Berurutan Tanpa Kepotong)
       stage.querySelectorAll('.word-inner').forEach((el, i) => {
         el.animate([
-          { opacity: 0, transform: 'translateY(115%) rotateZ(6deg)' },
-          { opacity: 1, transform: 'translateY(0%) rotateZ(0deg)' }
-        ], { duration: 550, delay: 200 + (i * 75), easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+          { opacity: 0, transform: 'translateY(100%)' },
+          { opacity: 1, transform: 'translateY(0%)' }
+        ], { duration: 450, delay: 250 + (i * 70), easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
       });
 
       document.getElementById('el-sub').animate([
-        { opacity: 0, transform: 'translateY(25px) scale(0.92)' },
-        { opacity: 1, transform: 'translateY(0) scale(1)' }
-      ], { duration: 550, delay: 480, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+        { opacity: 0, transform: 'translateY(20px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], { duration: 450, delay: 550, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
 
       document.getElementById('progress-line').animate([{ width: '0%' }, { width: '100%' }], { duration: durasiMs, fill: 'forwards' });
 
-      // Exit Transition
-      if (durasiMs > 900) {
-        exitTimer = setTimeout(() => {
-          stage.animate([
-            { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0px)' },
-            { opacity: 0, transform: 'scale(0.9) translateY(-25px)', filter: 'blur(8px)' }
-          ], { duration: 380, easing: ' ease-in', fill: 'forwards' });
-        }, durasiMs - 380);
-      }
+      // Transisi Keluar yang Halus di Akhir Durasi
+      exitTimer = setTimeout(() => {
+        stage.animate([
+          { opacity: 1, transform: 'scale(1) translateY(0)' },
+          { opacity: 0, transform: 'scale(0.95) translateY(-15px)' }
+        ], { duration: 300, easing: 'ease-in', fill: 'forwards' });
+      }, durasiMs - 300);
 
+      // Pindah Scene Aman
       sceneTimer = setTimeout(() => {
         currentIdx = (currentIdx + 1) % scenes.length;
         playScene(currentIdx);
