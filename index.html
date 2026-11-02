@@ -3,498 +3,294 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hyperframes Studio 9:16</title>
+  <title>Motion Canvas Explainer Studio 9:16</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #040508;
-      color: #fff;
+      background: #05060a; color: #fff;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 28px;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      display: flex; gap: 28px; justify-content: center; align-items: center;
+      min-height: 100vh; padding: 20px;
     }
-
-    /* Panel Editor JSON */
     #panel-input {
-      width: 350px;
-      background: #0d111a;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      width: 350px; background: #0f1420; border: 1px solid #1e293b;
+      border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     }
-    #panel-input h3 { font-size: 13px; color: #38bdf8; letter-spacing: 1.5px; text-transform: uppercase; }
+    #panel-input h3 { font-size: 13px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
     textarea {
-      width: 100%;
-      height: 420px;
-      background: #05070c;
-      color: #34d399;
-      border: 1px solid #1e293b;
-      border-radius: 10px;
-      padding: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      line-height: 1.45;
-      resize: none;
-      outline: none;
+      width: 100%; height: 420px; background: #060911; color: #4ade80;
+      border: 1px solid #1e293b; border-radius: 10px; padding: 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.45;
+      resize: none; outline: none;
     }
     .btn-apply {
-      background: linear-gradient(135deg, #0ea5e9, #6366f1);
-      color: #fff;
-      border: none;
-      padding: 13px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      transition: filter 0.2s, transform 0.1s;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #fff;
+      border: none; padding: 13px; border-radius: 10px; font-weight: 800;
+      font-size: 13px; cursor: pointer;
     }
     .btn-apply:hover { filter: brightness(1.15); }
-    .btn-apply:active { transform: scale(0.98); }
 
-    /* Viewport 9:16 Hyperframes */
     #viewport {
-      width: 360px;
-      height: 640px;
-      border-radius: 26px;
-      position: relative;
-      overflow: hidden;
-      background: #070a12;
+      width: 360px; height: 640px; border-radius: 26px; position: relative;
+      overflow: hidden; background: #070a12;
       box-shadow: 0 30px 80px rgba(0,0,0,0.95), 0 0 0 2px rgba(255,255,255,0.08);
-      transition: background 0.5s ease;
+      transition: background 0.6s ease;
     }
-
     #camera {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      inset: 0;
-      transform-origin: center center;
-      will-change: transform;
+      width: 100%; height: 100%; position: absolute; inset: 0;
+      transform-origin: center center; will-change: transform;
     }
+    .vector-grid {
+      position: absolute; inset: -80px;
+      background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 36px 36px; animation: gridMove 6s linear infinite; pointer-events: none;
+    }
+    @keyframes gridMove { 0% { transform: translate(0,0); } 100% { transform: translate(-36px,-36px); } }
 
-    .bg-grid {
-      position: absolute;
-      inset: -80px;
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 36px 36px;
-      pointer-events: none;
+    .ambient-glow {
+      position: absolute; width: 280px; height: 280px; border-radius: 50%;
+      filter: blur(65px); opacity: 0.45; top: 16%; left: 10%; pointer-events: none;
+      transition: background 0.5s ease; animation: pulseGlow 3s ease-in-out infinite alternate;
     }
+    @keyframes pulseGlow { 0% { transform: scale(0.9); } 100% { transform: scale(1.15); } }
 
-    .glow-orb {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      filter: blur(75px);
-      opacity: 0.45;
-      top: 18%;
-      left: 8%;
-      pointer-events: none;
-      transition: background 0.4s ease;
+    .hud-top {
+      position: absolute; top: 20px; left: 22px; right: 22px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 20;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.55); letter-spacing: 2px;
     }
-
-    /* HUD Atas & Bawah */
-    .hud-top, .hud-bottom {
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 25;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 1.5px;
-    }
-    .hud-top { top: 20px; }
-    .hud-bottom { bottom: 18px; }
     .rec-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      background: #ef4444;
-      border-radius: 50%;
-      margin-right: 6px;
-      box-shadow: 0 0 8px #ef4444;
+      display: inline-block; width: 7px; height: 7px; background: #ef4444;
+      border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px #ef4444;
+      animation: blink 0.8s infinite alternate;
     }
+    @keyframes blink { 0% { opacity: 1; } 100% { opacity: 0.25; } }
 
-    /* Stage Konten */
     #stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 34px 24px;
-      z-index: 10;
-      text-align: center;
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 30px 22px; z-index: 10; text-align: center;
     }
+    .mc-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 800;
+      letter-spacing: 3px; text-transform: uppercase; padding: 6px 16px; border-radius: 6px;
+      background: rgba(255,255,255,0.08); border-left: 3px solid #38bdf8;
+      margin-bottom: 20px; backdrop-filter: blur(6px); opacity: 0;
+    }
+    .mc-graphic-box {
+      position: relative; width: 200px; height: 200px; display: flex;
+      justify-content: center; align-items: center; margin-bottom: 20px;
+    }
+    .mc-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .svg-spin { transform-origin: 100px 100px; animation: spin 12s linear infinite; }
+    .svg-spin-rev { transform-origin: 100px 100px; animation: spinRev 9s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
-    .hf-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 6px 14px;
-      border-radius: 6px;
-      background: rgba(255,255,255,0.08);
-      border-left: 3px solid #38bdf8;
-      margin-bottom: 20px;
-      backdrop-filter: blur(8px);
-    }
+    .mc-center-val { position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; }
+    .mc-icon { font-size: 58px; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.6)); line-height: 1; opacity: 0; }
+    .mc-stat { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; margin-top: 6px; letter-spacing: -1px; }
 
-    /* Komponen Grafis SVG & Hero Stat */
-    .hf-visual {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 22px;
-    }
-    .hf-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-    .hf-center {
-      position: relative;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .hf-icon {
-      font-size: 58px;
-      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.65));
-      line-height: 1;
-    }
-    .hf-stat {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 26px;
-      font-weight: 800;
-      margin-top: 8px;
-      letter-spacing: -1px;
-    }
+    .mc-title-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 8px; margin-bottom: 16px; }
+    .word-mask { overflow: hidden; display: inline-block; padding: 2px 0; }
+    .word-inner { display: inline-block; font-size: 27px; font-weight: 900; line-height: 1.12; text-transform: uppercase; opacity: 0; }
 
-    /* Tipografi Kinetik */
-    .hf-title {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px 8px;
-      margin-bottom: 16px;
+    .mc-sub-box {
+      background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px; padding: 13px 16px; backdrop-filter: blur(10px); max-width: 310px; opacity: 0;
     }
-    .hf-word {
-      display: inline-block;
-      font-size: 28px;
-      font-weight: 900;
-      line-height: 1.1;
-      text-transform: uppercase;
-      letter-spacing: -0.5px;
-      text-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      will-change: transform, opacity;
-    }
+    .mc-sub-text { font-size: 14px; font-weight: 600; line-height: 1.45; color: rgba(255,255,255,0.92); }
 
-    .hf-sub-card {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 14px;
-      padding: 14px 18px;
-      backdrop-filter: blur(12px);
-      max-width: 310px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    .hud-bottom {
+      position: absolute; bottom: 18px; left: 22px; right: 22px;
+      display: flex; justify-content: space-between; align-items: flex-end; z-index: 20;
     }
-    .hf-sub-text {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.5;
-      color: rgba(255,255,255,0.92);
-    }
-
-    /* Flash Overlay saat Transisi */
-    #flash-overlay {
-      position: absolute;
-      inset: 0;
-      background: #fff;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 30;
-    }
-
-    #progress-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      background: #38bdf8;
-      width: 0%;
-      z-index: 35;
-    }
+    .bars { display: flex; gap: 3px; align-items: flex-end; height: 16px; }
+    .bar { width: 3px; background: #38bdf8; border-radius: 2px; animation: eq 0.4s ease-in-out infinite alternate; }
+    .bar:nth-child(2) { animation-delay: 0.1s; } .bar:nth-child(3) { animation-delay: 0.25s; }
+    .bar:nth-child(4) { animation-delay: 0.15s; } .bar:nth-child(5) { animation-delay: 0.3s; }
+    @keyframes eq { 0% { height: 4px; } 100% { height: 16px; } }
+    .scene-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.5); }
+    #progress-line { position: absolute; bottom: 0; left: 0; height: 5px; background: #38bdf8; width: 0%; z-index: 30; }
   </style>
 </head>
 <body>
 
   <div id="panel-input">
-    <h3>⚡ Hyperframes JSON Studio</h3>
+    <h3>🎬 Motion Canvas JSON Studio</h3>
     <textarea id="json-input"></textarea>
     <button class="btn-apply" onclick="applyAndPlay()">▶️ Terapkan & Putar Animasi</button>
   </div>
 
   <div id="viewport">
-    <div id="flash-overlay"></div>
-
     <div class="hud-top">
-      <div><span class="rec-dot"></span>HYPERFRAMES // 60FPS</div>
-      <div id="hud-clock">00:00.0</div>
+      <div><span class="rec-dot"></span>SIMULATION // 60FPS</div>
+      <div id="hud-timer">00:00.0</div>
     </div>
-
     <div id="camera">
-      <div class="bg-grid" id="bg-grid"></div>
-      <div class="glow-orb" id="glow-orb"></div>
+      <div class="vector-grid"></div>
+      <div class="ambient-glow" id="bg-glow"></div>
       <div id="stage"></div>
     </div>
-
     <div class="hud-bottom">
-      <div id="hud-mode">MODE: DETERMINISTIC</div>
-      <div id="hud-scene">SCENE 01/06</div>
+      <div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+      <div class="scene-counter" id="scene-idx">SCENE 01/06</div>
     </div>
-
-    <div id="progress-bar"></div>
+    <div id="progress-line"></div>
   </div>
 
   <script>
     window.DATA_VIDEO = [
-      {
-        durasi: 3.5,
-        aksen: "#38bdf8",
-        bg: "radial-gradient(circle at 50% 25%, #0f172a, #020617)",
-        kategori: "WHAT IF SAINS",
-        ikon: "🌍",
-        angka: 5,
-        satuan: " DETIK",
-        teksUtama: "BUMI TANPA OKSIGEN?",
-        subTeks: "Bukan cuma soal napas, struktur bumi akan hancur seketika!",
-        kamera: "zoomIn"
-      },
-      {
-        durasi: 4.5,
-        aksen: "#facc15",
-        bg: "radial-gradient(circle at 50% 25%, #450a0a, #090202)",
-        kategori: "DETIK KE-1 // STRUKTUR",
-        ikon: "🏢",
-        angka: 100,
-        satuan: "% RUNTUH",
-        teksUtama: "GEDUNG BETON JADI DEBU",
-        subTeks: "Oksigen adalah pengikat utama molekul beton di seluruh dunia.",
-        kamera: "shake"
-      },
-      {
-        durasi: 4.5,
-        aksen: "#a855f7",
-        bg: "radial-gradient(circle at 50% 25%, #1e1b4b, #030108)",
-        kategori: "DETIK KE-2 // ATMOSFER",
-        ikon: "🌌",
-        angka: 0,
-        satuan: " CAHAYA",
-        teksUtama: "LANGIT SIANG GELAP GULITA",
-        subTeks: "Partikel udara berkurang 21%, cahaya matahari gagal dipantulkan.",
-        kamera: "pan"
-      },
-      {
-        durasi: 4.5,
-        aksen: "#f43f5e",
-        bg: "radial-gradient(circle at 50% 25%, #3b0764, #090314)",
-        kategori: "DETIK KE-3 // MESIN",
-        ikon: "✈️",
-        angka: 0,
-        satuan: " PEMBAKARAN",
-        teksUtama: "KENDARAAN & PESAWAT MATI",
-        subTeks: "Tanpa oksigen, tidak ada api di mesin pembakaran internal.",
-        kamera: "zoomOut"
-      },
-      {
-        durasi: 4.5,
-        aksen: "#fb923c",
-        bg: "radial-gradient(circle at 50% 25%, #7c2d12, #0c0401)",
-        kategori: "DETIK KE-4 // RADIASI",
-        ikon: "☀️",
-        angka: 300,
-        satuan: "% UV EKSTREM",
-        teksUtama: "LAPISAN OZON LENYAP",
-        subTeks: "Ozon terbuat dari 3 atom oksigen. Kulit langsung terbakar!",
-        kamera: "shake"
-      },
-      {
-        durasi: 4.0,
-        aksen: "#2dd4bf",
-        bg: "radial-gradient(circle at 50% 25%, #064e3b, #02120e)",
-        kategori: "KESIMPULAN",
-        ikon: "🧬",
-        angka: 21,
-        satuan: "% OKSIGEN",
-        teksUtama: "BISAKAH KITA SELAMAT?",
-        subTeks: "Tulis pendapatmu di kolom komentar di bawah!",
-        kamera: "zoomIn"
-      }
+      { durasi: 3.5, warnaAksen: "#38bdf8", bg: "radial-gradient(circle at 50% 30%, #0f172a, #020617)", kategori: "SIMULASI SAINS", ikon: "🌍", angkaTarget: 5, satuan: " DETIK", teksUtama: "BUMI TANPA OKSIGEN?", subTeks: "Bukan cuma soal napas, struktur bumi akan hancur seketika!", efekKamera: "zoomIn" },
+      { durasi: 4.5, warnaAksen: "#facc15", bg: "radial-gradient(circle at 50% 30%, #450a0a, #090202)", kategori: "DETIK KE-1 // STRUKTUR", ikon: "🏢", angkaTarget: 100, satuan: "% RUNTUH", teksUtama: "GEDUNG BETON MENJADI DEBU", subTeks: "Oksigen adalah pengikat utama molekul beton di seluruh dunia.", efekKamera: "shake" },
+      { durasi: 5.0, warnaAksen: "#a855f7", bg: "radial-gradient(circle at 50% 30%, #1e1b4b, #030108)", kategori: "DETIK KE-2 // ATMOSFER", ikon: "🌌", angkaTarget: 0, satuan: " CAHAYA", teksUtama: "LANGIT SIANG GELAP GULITA", subTeks: "Partikel udara berkurang 21%, cahaya matahari gagal dipantulkan.", efekKamera: "panRight" },
+      { durasi: 4.5, warnaAksen: "#f43f5e", bg: "radial-gradient(circle at 50% 30%, #3b0764, #090314)", kategori: "DETIK KE-3 // MESIN", ikon: "✈️", angkaTarget: 0, satuan: " PEMBAKARAN", teksUtama: "KENDARAAN & PESAWAT MATI", subTeks: "Tanpa oksigen, tidak ada api di mesin pembakaran internal.", efekKamera: "zoomOut" },
+      { durasi: 4.5, warnaAksen: "#fb923c", bg: "radial-gradient(circle at 50% 30%, #7c2d12, #0c0401)", kategori: "DETIK KE-4 // RADIASI", ikon: "☀️", angkaTarget: 300, satuan: "% UV EKSTREM", teksUtama: "LAPISAN OZON LENYAP", subTeks: "Ozon terbuat dari 3 atom oksigen. Kulit langsung terbakar!", efekKamera: "shake" },
+      { durasi: 4.0, warnaAksen: "#2dd4bf", bg: "radial-gradient(circle at 50% 30%, #064e3b, #02120e)", kategori: "KESIMPULAN AKHIR", ikon: "🧬", angkaTarget: 21, satuan: "% OKSIGEN", teksUtama: "BISAKAH KITA SELAMAT?", subTeks: "Tulis pendapatmu di kolom komentar di bawah!", efekKamera: "zoomIn" }
     ];
 
     const inputEl = document.getElementById('json-input');
     inputEl.value = JSON.stringify(window.DATA_VIDEO, null, 2);
 
-    let rafId = null;
-    let sceneIdx = 0;
-    let sceneStart = 0;
-    let globalStart = performance.now();
+    let currentIdx = 0, sceneTimer = null, exitTimer = null, rafId = null;
+    let startTime = performance.now();
 
-    // Fungsi kurva pegas & easing (standar Hyperframes / Remotion)
-    function easeOutBack(x) {
-      const c1 = 1.70158;
-      const c3 = c1 + 1;
-      return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-    }
-    function easeOutCubic(x) {
-      return 1 - Math.pow(1 - x, 3);
-    }
-    function clamp(val, min, max) {
-      return Math.max(min, Math.min(max, val));
-    }
+    setInterval(() => {
+      const s = ((performance.now() - startTime) / 1000).toFixed(1);
+      document.getElementById('hud-timer').innerText = "00:" + s.padStart(4, '0');
+    }, 100);
 
-    function buildSceneDOM(s, idx, total) {
-      const viewport = document.getElementById('viewport');
-      const glow = document.getElementById('glow-orb');
-      const stage = document.getElementById('stage');
-      const prog = document.getElementById('progress-bar');
-      const aksen = s.aksen || "#38bdf8";
+    function playScene(index) {
+      const scenes = window.DATA_VIDEO || [];
+      if (!scenes.length) return;
+      clearTimeout(sceneTimer); clearTimeout(exitTimer); cancelAnimationFrame(rafId);
 
-      viewport.style.background = s.bg || "#070a12";
-      glow.style.background = aksen;
-      prog.style.background = aksen;
-      document.getElementById('hud-scene').innerText = `SCENE 0${idx + 1}/0${total}`;
+      const s = scenes[index];
+      const durasiMs = (s.durasi || 4) * 1000;
+      const aksen = s.warnaAksen || "#38bdf8";
+
+      document.getElementById('viewport').style.background = s.bg || "#070a12";
+      document.getElementById('bg-glow').style.background = aksen;
+      document.getElementById('progress-line').style.background = aksen;
+      document.getElementById('scene-idx').innerText = `SCENE 0${index + 1}/0${scenes.length}`;
 
       const words = (s.teksUtama || "").split(" ").filter(Boolean);
       const wordsHtml = words.map((w, i) => {
-        const isHighlight = i === words.length - 1;
-        return `<span class="hf-word" data-idx="${i}" style="color:${isHighlight ? aksen : '#ffffff'}">${w}</span>`;
+        const col = (i === words.length - 1) ? aksen : "#ffffff";
+        return `<span class="word-mask"><span class="word-inner" style="color:${col}">${w}</span></span>`;
       }).join("");
 
+      const stage = document.getElementById('stage');
       stage.innerHTML = `
-        <div class="hf-tag" id="el-tag" style="border-left-color:${aksen}; color:${aksen}">${s.kategori || 'INFO'}</div>
-        <div class="hf-visual">
-          <svg class="hf-svg" viewBox="0 0 200 200">
-            <circle id="svg-outer" cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="8 6" />
-            <circle id="svg-prog" cx="100" cy="100" r="76" fill="none" stroke="${aksen}" stroke-width="4" stroke-linecap="round" stroke-dasharray="477" stroke-dashoffset="477" transform="rotate(-90 100 100)" />
-            <polygon id="svg-poly" points="100,26 164,63 164,137 100,174 36,137 36,63" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1" />
+        <div class="mc-tag" id="el-tag" style="border-left-color:${aksen}; color:${aksen}">${s.kategori || 'INFO'}</div>
+        <div class="mc-graphic-box">
+          <svg class="mc-svg" viewBox="0 0 200 200">
+            <circle class="svg-spin" cx="100" cy="100" r="92" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="8 6" />
+            <circle id="ring-draw" cx="100" cy="100" r="76" fill="none" stroke="${aksen}" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="480" stroke-dashoffset="480" transform="rotate(-90 100 100)" />
+            <polygon class="svg-spin-rev" points="100,26 164,63 164,137 100,174 36,137 36,63" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" />
           </svg>
-          <div class="hf-center">
-            <div class="hf-icon" id="el-icon">${s.ikon || '⚡'}</div>
-            <div class="hf-stat" style="color:${aksen}"><span id="el-num">0</span>${s.satuan || ''}</div>
+          <div class="mc-center-val">
+            <div class="mc-icon" id="el-icon">${s.ikon || '⚡'}</div>
+            ${s.angkaTarget !== undefined ? `<div class="mc-stat" style="color:${aksen}"><span id="num-val">0</span>${s.satuan || ''}</div>` : ''}
           </div>
         </div>
-        <div class="hf-title" id="el-title">${wordsHtml}</div>
-        <div class="hf-sub-card" id="el-sub">
-          <div class="hf-sub-text">${s.subTeks || ''}</div>
-        </div>
+        <div class="mc-title-container">${wordsHtml}</div>
+        <div class="mc-sub-box" id="el-sub"><div class="mc-sub-text">${s.subTeks || ''}</div></div>
       `;
 
-      // Efek kilat transisi awal adegan
-      const flash = document.getElementById('flash-overlay');
-      flash.style.opacity = '0.28';
-      setTimeout(() => { flash.style.transition = 'opacity 0.35s ease'; flash.style.opacity = '0'; }, 30);
-    }
-
-    // Mesin Render Deterministik Frame-by-Frame (60 FPS)
-    function tick(now) {
-      const scenes = window.DATA_VIDEO || [];
-      if (!scenes.length) return;
-
-      const s = scenes[sceneIdx];
-      const durasiMs = (s.durasi || 4) * 1000;
-      const elapsed = now - sceneStart;
-      const t = clamp(elapsed / durasiMs, 0, 1);
-
-      // Update Jam HUD
-      const totalSec = ((now - globalStart) / 1000).toFixed(1);
-      document.getElementById('hud-clock').innerText = `00:${totalSec.padStart(4, '0')}`;
-      document.getElementById('progress-bar').style.width = `${t * 100}%`;
-
-      // 1. Pergerakan Kamera Virtual & Grid
-      const camera = document.getElementById('camera');
-      const grid = document.getElementById('bg-grid');
-      grid.style.transform = `translate(${-t * 36}px, ${-t * 36}px)`;
-
-      let camScale = 1;
-      let camX = 0;
-      let camY = 0;
-      if (s.kamera === "zoomIn") camScale = 0.92 + t * 0.14;
-      else if (s.kamera === "zoomOut") camScale = 1.12 - t * 0.14;
-      else if (s.kamera === "pan") { camScale = 1.05; camX = -15 + t * 30; }
-      else if (s.kamera === "shake") {
-        camScale = 0.96 + t * 0.08;
-        if (elapsed > 250 && elapsed < 950) {
-          camX = Math.sin(elapsed * 0.09) * 6;
-          camY = Math.cos(elapsed * 0.11) * 6;
-        }
-      }
-      camera.style.transform = `translate(${camX}px, ${camY}px) scale(${camScale})`;
-
-      // 2. Animasi Vektor SVG & Counter Angka
-      const svgOuter = document.getElementById('svg-outer');
-      const svgPoly = document.getElementById('svg-poly');
-      const svgProg = document.getElementById('svg-prog');
-      if (svgOuter) svgOuter.style.transform = `rotate(${elapsed * 0.04}deg)`;
-      if (svgOuter) svgOuter.style.transformOrigin = '100px 100px';
-      if (svgPoly) svgPoly.style.transform = `rotate(${-elapsed * 0.03}deg)`;
-      if (svgPoly) svgPoly.style.transformOrigin = '100px 100px';
-
-      const drawProgress = easeOutCubic(clamp(elapsed / 1100, 0, 1));
-      if (svgProg) svgProg.style.strokeDashoffset = 477 - (477 * 0.82 * drawProgress);
-
-      const numEl = document.getElementById('el-num');
-      if (numEl && s.angka !== undefined) {
-        numEl.innerText = Math.round(s.angka * drawProgress);
+      // Kamera Virtual
+      const cam = document.getElementById('camera');
+      if (s.efekKamera === "shake") {
+        cam.animate([
+          { transform: 'translate(0,0) scale(1)' },
+          { transform: 'translate(-6px, 5px) scale(1.03)', offset: 0.1 },
+          { transform: 'translate(6px, -5px) scale(1.04)', offset: 0.2 },
+          { transform: 'translate(-4px, -4px) scale(1.04)', offset: 0.3 },
+          { transform: 'translate(4px, 4px) scale(1.05)', offset: 0.4 },
+          { transform: 'translate(0,0) scale(1.06)' }
+        ], { duration: durasiMs, easing: 'ease-out', fill: 'forwards' });
+      } else if (s.efekKamera === "panRight") {
+        cam.animate([{ transform: 'translateX(-16px) scale(1.04)' }, { transform: 'translateX(16px) scale(1.04)' }], { duration: durasiMs, fill: 'forwards' });
+      } else if (s.efekKamera === "zoomOut") {
+        cam.animate([{ transform: 'scale(1.12)' }, { transform: 'scale(0.96)' }], { duration: durasiMs, fill: 'forwards' });
+      } else {
+        cam.animate([{ transform: 'scale(0.92)' }, { transform: 'scale(1.08)' }], { duration: durasiMs, fill: 'forwards' });
       }
 
-      // 3. Animasi Masuk & Keluar Elemen (Spring Physics)
-      const exitPhase = clamp((elapsed - (durasiMs - 380)) / 380, 0, 1);
-      const exitScale = 1 - exitPhase * 0.15;
-      const exitOpacity = 1 - exitPhase;
+      // Animasi Elemen (Spring Curves)
+      document.getElementById('el-tag').animate([
+        { opacity: 0, transform: 'translateY(-25px) scale(0.8)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)' }
+      ], { duration: 500, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
 
-      const tagEl = document.getElementById('el-tag');
-      if (tagEl) {
-        const p = easeOutBack(clamp(elapsed / 450, 0, 1));
-        tagEl.style.opacity = clamp(elapsed / 250, 0, 1) * exitOpacity;
-        tagEl.style.transform = `translateY(${(1 - p) * -25}px) scale(${p * exitScale})`;
-      }
+      document.getElementById('ring-draw').animate([
+        { strokeDashoffset: 480 }, { strokeDashoffset: 75 }
+      ], { duration: 1100, delay: 100, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
 
       const iconEl = document.getElementById('el-icon');
-      if (iconEl) {
-        const p = easeOutBack(clamp((elapsed - 80) / 550, 0, 1));
-        const floatY = Math.sin(elapsed * 0.004) * 6;
-        iconEl.style.opacity = clamp((elapsed - 80) / 200, 0, 1) * exitOpacity;
-        iconEl.style.transform = `translateY(${floatY}px) scale(${p * exitScale})`;
+      iconEl.animate([
+        { opacity: 0, transform: 'scale(0.1) rotate(-30deg)' },
+        { opacity: 1, transform: 'scale(1.18) rotate(6deg)', offset: 0.65 },
+        { opacity: 1, transform: 'scale(1) rotate(0deg)' }
+      ], { duration: 750, delay: 120, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'forwards' });
+
+      // Counter Angka 60FPS
+      if (s.angkaTarget !== undefined) {
+        const numEl = document.getElementById('num-val');
+        const t0 = performance.now();
+        function tick(now) {
+          const p = Math.min(1, (now - t0) / 1000);
+          const ease = 1 - Math.pow(1 - p, 3);
+          if (numEl) numEl.innerText = Math.round(s.angkaTarget * ease);
+          if (p < 1) rafId = requestAnimationFrame(tick);
+        }
+        rafId = requestAnimationFrame(tick);
       }
 
-      const words = document.querySelectorAll('.hf-word');
-      words.forEach((w, i) => {
-        const delay = 180 + i * 75;
-        const p = easeOutBack(clamp((elapsed - delay) / 500, 0, 1));
-        const op = clamp((elapsed - delay) / 220, 0, 1)
+      // Masking Kata per Kata
+      stage.querySelectorAll('.word-inner').forEach((el, i) => {
+        el.animate([
+          { opacity: 0, transform: 'translateY(115%) rotateZ(6deg)' },
+          { opacity: 1, transform: 'translateY(0%) rotateZ(0deg)' }
+        ], { duration: 550, delay: 200 + (i * 75), easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+      });
+
+      document.getElementById('el-sub').animate([
+        { opacity: 0, transform: 'translateY(25px) scale(0.92)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)' }
+      ], { duration: 550, delay: 480, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+
+      document.getElementById('progress-line').animate([{ width: '0%' }, { width: '100%' }], { duration: durasiMs, fill: 'forwards' });
+
+      // Exit Transition
+      if (durasiMs > 900) {
+        exitTimer = setTimeout(() => {
+          stage.animate([
+            { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0px)' },
+            { opacity: 0, transform: 'scale(0.9) translateY(-25px)', filter: 'blur(8px)' }
+          ], { duration: 380, easing: ' ease-in', fill: 'forwards' });
+        }, durasiMs - 380);
+      }
+
+      sceneTimer = setTimeout(() => {
+        currentIdx = (currentIdx + 1) % scenes.length;
+        playScene(currentIdx);
+      }, durasiMs);
+    }
+
+    function applyAndPlay() {
+      try {
+        window.DATA_VIDEO = eval('(' + inputEl.value + ')');
+        currentIdx = 0; startTime = performance.now();
+        playScene(0);
+      } catch (e) {
+        alert("Format JSON kurang tepat, periksa tanda kurung dan koma!");
+      }
+    }
+
+    playScene(0);
+  </script>
+</body>
+</html>
