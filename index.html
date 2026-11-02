@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motion Canvas Explainer Studio 9:16</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
-  <!-- Engine Animasi Kelas Studio: GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <title>Hyperframes Studio 9:16</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #05060a;
+      background: #040508;
       color: #fff;
       font-family: 'Plus Jakarta Sans', sans-serif;
       display: flex;
+      flex-wrap: wrap;
       gap: 28px;
       justify-content: center;
       align-items: center;
@@ -24,21 +23,21 @@
     /* Panel Editor JSON */
     #panel-input {
       width: 350px;
-      background: #0f1420;
+      background: #0d111a;
       border: 1px solid #1e293b;
       border-radius: 16px;
       padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
-    #panel-input h3 { font-size: 13px; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; }
+    #panel-input h3 { font-size: 13px; color: #38bdf8; letter-spacing: 1.5px; text-transform: uppercase; }
     textarea {
       width: 100%;
-      height: 430px;
-      background: #060911;
-      color: #4ade80;
+      height: 420px;
+      background: #05070c;
+      color: #34d399;
       border: 1px solid #1e293b;
       border-radius: 10px;
       padding: 12px;
@@ -48,21 +47,21 @@
       resize: none;
       outline: none;
     }
-    .btn-row { display: flex; gap: 8px; }
     .btn-apply {
-      flex: 1;
       background: linear-gradient(135deg, #0ea5e9, #6366f1);
       color: #fff;
       border: none;
-      padding: 12px;
+      padding: 13px;
       border-radius: 10px;
       font-weight: 800;
       font-size: 13px;
       cursor: pointer;
+      transition: filter 0.2s, transform 0.1s;
     }
     .btn-apply:hover { filter: brightness(1.15); }
+    .btn-apply:active { transform: scale(0.98); }
 
-    /* Kanvas Video 9:16 */
+    /* Viewport 9:16 Hyperframes */
     #viewport {
       width: 360px;
       height: 640px;
@@ -71,9 +70,9 @@
       overflow: hidden;
       background: #070a12;
       box-shadow: 0 30px 80px rgba(0,0,0,0.95), 0 0 0 2px rgba(255,255,255,0.08);
+      transition: background 0.5s ease;
     }
 
-    /* Kamera Virtual (Bisa Zoom, Pan, Rotate seperti Motion Canvas) */
     #camera {
       width: 100%;
       height: 100%;
@@ -83,44 +82,45 @@
       will-change: transform;
     }
 
-    /* Latar Grid Vektor */
-    .vector-grid {
+    .bg-grid {
       position: absolute;
-      inset: -100px;
+      inset: -80px;
       background-image: 
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
       background-size: 36px 36px;
       pointer-events: none;
     }
 
-    .ambient-glow {
+    .glow-orb {
       position: absolute;
-      width: 320px;
-      height: 320px;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
-      filter: blur(70px);
+      filter: blur(75px);
       opacity: 0.45;
-      top: 15%;
-      left: 6%;
+      top: 18%;
+      left: 8%;
       pointer-events: none;
+      transition: background 0.4s ease;
     }
 
-    /* HUD Sains Atas & Bawah */
-    .hud-top {
+    /* HUD Atas & Bawah */
+    .hud-top, .hud-bottom {
       position: absolute;
-      top: 22px;
-      left: 24px;
-      right: 24px;
+      left: 22px;
+      right: 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 20;
+      z-index: 25;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 2px;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 1.5px;
     }
+    .hud-top { top: 20px; }
+    .hud-bottom { bottom: 18px; }
     .rec-dot {
       display: inline-block;
       width: 7px;
@@ -131,7 +131,7 @@
       box-shadow: 0 0 8px #ef4444;
     }
 
-    /* Stage Utama */
+    /* Stage Konten */
     #stage {
       position: absolute;
       inset: 0;
@@ -139,439 +139,362 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 32px 26px;
+      padding: 34px 24px;
       z-index: 10;
       text-align: center;
     }
 
-    /* Tag Kategori */
-    .mc-tag {
+    .hf-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 3px;
       text-transform: uppercase;
-      padding: 6px 16px;
+      padding: 6px 14px;
       border-radius: 6px;
       background: rgba(255,255,255,0.08);
       border-left: 3px solid #38bdf8;
-      margin-bottom: 22px;
-      backdrop-filter: blur(6px);
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
     }
 
-    /* Kanvas Ilustrasi Vektor SVG */
-    .mc-graphic-box {
+    /* Komponen Grafis SVG & Hero Stat */
+    .hf-visual {
       position: relative;
-      width: 210px;
-      height: 210px;
+      width: 200px;
+      height: 200px;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
-    .mc-svg {
+    .hf-svg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       overflow: visible;
     }
-    .mc-center-val {
+    .hf-center {
       position: relative;
       z-index: 5;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    .mc-icon {
-      font-size: 64px;
-      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.6));
+    .hf-icon {
+      font-size: 58px;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.65));
       line-height: 1;
     }
-    .mc-stat {
+    .hf-stat {
       font-family: 'JetBrains Mono', monospace;
       font-size: 26px;
       font-weight: 800;
-      margin-top: 6px;
+      margin-top: 8px;
       letter-spacing: -1px;
     }
 
-    /* Tipografi dengan Masking (Gaya Video Explainer) */
-    .mc-title-container {
+    /* Tipografi Kinetik */
+    .hf-title {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 6px 8px;
       margin-bottom: 16px;
     }
-    .word-mask {
-      overflow: hidden;
+    .hf-word {
       display: inline-block;
-      padding: 2px 0;
-    }
-    .word-inner {
-      display: inline-block;
-      font-size: 29px;
+      font-size: 28px;
       font-weight: 900;
       line-height: 1.1;
       text-transform: uppercase;
-      letter-spacing: -0.6px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      will-change: transform, opacity;
     }
 
-    /* Box Subteks dengan Garis Aksen */
-    .mc-sub-box {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(255,255,255,0.12);
+    .hf-sub-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255,255,255,0.14);
       border-radius: 14px;
       padding: 14px 18px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       max-width: 310px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
     }
-    .mc-sub-text {
-      font-size: 14.5px;
+    .hf-sub-text {
+      font-size: 14px;
       font-weight: 600;
       line-height: 1.5;
       color: rgba(255,255,255,0.92);
     }
 
-    /* Gelombang Audio Bawah & Timeline */
-    .hud-bottom {
+    /* Flash Overlay saat Transisi */
+    #flash-overlay {
       position: absolute;
-      bottom: 20px;
-      left: 24px;
-      right: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      z-index: 20;
-    }
-    .bars {
-      display: flex;
-      gap: 3px;
-      align-items: flex-end;
-      height: 18px;
-    }
-    .bar {
-      width: 3px;
-      background: #38bdf8;
-      border-radius: 2px;
-      height: 6px;
-    }
-    .scene-counter {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 30;
     }
 
-    #progress-line {
+    #progress-bar {
       position: absolute;
       bottom: 0;
       left: 0;
       height: 5px;
       background: #38bdf8;
       width: 0%;
-      z-index: 30;
-    }
-
-    /* Tirai Transisi Whip-Pan */
-    #transition-wipe {
-      position: absolute;
-      inset: 0;
-      background: #38bdf8;
-      z-index: 40;
-      transform: scaleY(0);
-      transform-origin: bottom;
-      pointer-events: none;
+      z-index: 35;
     }
   </style>
 </head>
 <body>
 
   <div id="panel-input">
-    <h3>🎬 Motion Canvas JSON Studio</h3>
+    <h3>⚡ Hyperframes JSON Studio</h3>
     <textarea id="json-input"></textarea>
-    <div class="btn-row">
-      <button class="btn-apply" onclick="applyAndPlay()">▶️ Terapkan & Putar Animasi</button>
-    </div>
+    <button class="btn-apply" onclick="applyAndPlay()">▶️ Terapkan & Putar Animasi</button>
   </div>
 
   <div id="viewport">
-    <div id="transition-wipe"></div>
+    <div id="flash-overlay"></div>
 
     <div class="hud-top">
-      <div><span class="rec-dot"></span>SIMULATION // 60FPS</div>
-      <div id="hud-timer">00:00.0</div>
+      <div><span class="rec-dot"></span>HYPERFRAMES // 60FPS</div>
+      <div id="hud-clock">00:00.0</div>
     </div>
 
     <div id="camera">
-      <div class="vector-grid" id="bg-grid"></div>
-      <div class="ambient-glow" id="bg-glow"></div>
+      <div class="bg-grid" id="bg-grid"></div>
+      <div class="glow-orb" id="glow-orb"></div>
       <div id="stage"></div>
     </div>
 
     <div class="hud-bottom">
-      <div class="bars" id="audio-bars">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      </div>
-      <div class="scene-counter" id="scene-idx">SCENE 01/06</div>
+      <div id="hud-mode">MODE: DETERMINISTIC</div>
+      <div id="hud-scene">SCENE 01/06</div>
     </div>
 
-    <div id="progress-line"></div>
+    <div id="progress-bar"></div>
   </div>
 
   <script>
-    // Data Default "Bumi Tanpa Oksigen 5 Detik" dengan parameter visual sains
     window.DATA_VIDEO = [
       {
         durasi: 3.5,
-        warnaAksen: "#38bdf8",
-        bg: "radial-gradient(circle at 50% 30%, #0f172a, #020617)",
-        kategori: "SIMULASI SAINS",
+        aksen: "#38bdf8",
+        bg: "radial-gradient(circle at 50% 25%, #0f172a, #020617)",
+        kategori: "WHAT IF SAINS",
         ikon: "🌍",
-        angkaTarget: 5,
+        angka: 5,
         satuan: " DETIK",
         teksUtama: "BUMI TANPA OKSIGEN?",
         subTeks: "Bukan cuma soal napas, struktur bumi akan hancur seketika!",
-        efekKamera: "zoomIn"
+        kamera: "zoomIn"
       },
       {
         durasi: 4.5,
-        warnaAksen: "#facc15",
-        bg: "radial-gradient(circle at 50% 30%, #450a0a, #090202)",
+        aksen: "#facc15",
+        bg: "radial-gradient(circle at 50% 25%, #450a0a, #090202)",
         kategori: "DETIK KE-1 // STRUKTUR",
         ikon: "🏢",
-        angkaTarget: 100,
+        angka: 100,
         satuan: "% RUNTUH",
-        teksUtama: "GEDUNG BETON MENJADI DEBU",
+        teksUtama: "GEDUNG BETON JADI DEBU",
         subTeks: "Oksigen adalah pengikat utama molekul beton di seluruh dunia.",
-        efekKamera: "shake"
+        kamera: "shake"
       },
       {
-        durasi: 5.0,
-        warnaAksen: "#a855f7",
-        bg: "radial-gradient(circle at 50% 30%, #1e1b4b, #030108)",
+        durasi: 4.5,
+        aksen: "#a855f7",
+        bg: "radial-gradient(circle at 50% 25%, #1e1b4b, #030108)",
         kategori: "DETIK KE-2 // ATMOSFER",
         ikon: "🌌",
-        angkaTarget: 0,
+        angka: 0,
         satuan: " CAHAYA",
         teksUtama: "LANGIT SIANG GELAP GULITA",
         subTeks: "Partikel udara berkurang 21%, cahaya matahari gagal dipantulkan.",
-        efekKamera: "panRight"
+        kamera: "pan"
       },
       {
         durasi: 4.5,
-        warnaAksen: "#f43f5e",
-        bg: "radial-gradient(circle at 50% 30%, #3b0764, #090314)",
+        aksen: "#f43f5e",
+        bg: "radial-gradient(circle at 50% 25%, #3b0764, #090314)",
         kategori: "DETIK KE-3 // MESIN",
         ikon: "✈️",
-        angkaTarget: 0,
+        angka: 0,
         satuan: " PEMBAKARAN",
         teksUtama: "KENDARAAN & PESAWAT MATI",
         subTeks: "Tanpa oksigen, tidak ada api di mesin pembakaran internal.",
-        efekKamera: "zoomOut"
+        kamera: "zoomOut"
       },
       {
         durasi: 4.5,
-        warnaAksen: "#fb923c",
-        bg: "radial-gradient(circle at 50% 30%, #7c2d12, #0c0401)",
+        aksen: "#fb923c",
+        bg: "radial-gradient(circle at 50% 25%, #7c2d12, #0c0401)",
         kategori: "DETIK KE-4 // RADIASI",
         ikon: "☀️",
-        angkaTarget: 300,
+        angka: 300,
         satuan: "% UV EKSTREM",
         teksUtama: "LAPISAN OZON LENYAP",
         subTeks: "Ozon terbuat dari 3 atom oksigen. Kulit langsung terbakar!",
-        efekKamera: "shake"
+        kamera: "shake"
       },
       {
         durasi: 4.0,
-        warnaAksen: "#2dd4bf",
-        bg: "radial-gradient(circle at 50% 30%, #064e3b, #02120e)",
-        kategori: "KESIMPULAN AKHIR",
+        aksen: "#2dd4bf",
+        bg: "radial-gradient(circle at 50% 25%, #064e3b, #02120e)",
+        kategori: "KESIMPULAN",
         ikon: "🧬",
-        angkaTarget: 21,
+        angka: 21,
         satuan: "% OKSIGEN",
         teksUtama: "BISAKAH KITA SELAMAT?",
         subTeks: "Tulis pendapatmu di kolom komentar di bawah!",
-        efekKamera: "zoomIn"
+        kamera: "zoomIn"
       }
     ];
 
-    document.getElementById('json-input').value = JSON.stringify(window.DATA_VIDEO, null, 2);
+    const inputEl = document.getElementById('json-input');
+    inputEl.value = JSON.stringify(window.DATA_VIDEO, null, 2);
 
-    let mainTl = null;
-    let currentIdx = 0;
-    let clockInterval = null;
+    let rafId = null;
+    let sceneIdx = 0;
+    let sceneStart = 0;
+    let globalStart = performance.now();
 
-    // Animasi Bar Audio & Timer HUD
-    gsap.to("#audio-bars .bar", {
-      height: () => gsap.utils.random(4, 18),
-      duration: 0.2,
-      repeat: -1,
-      yoyo: true,
-      stagger: 0.05,
-      ease: "sine.inOut"
-    });
+    // Fungsi kurva pegas & easing (standar Hyperframes / Remotion)
+    function easeOutBack(x) {
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+    }
+    function easeOutCubic(x) {
+      return 1 - Math.pow(1 - x, 3);
+    }
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
 
-    let startTime = Date.now();
-    clockInterval = setInterval(() => {
-      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-      document.getElementById('hud-timer').innerText = `00:${elapsed.padStart(4, '0')}`;
-    }, 100);
-
-    function playScene(index) {
-      const scenes = window.DATA_VIDEO || [];
-      if (!scenes.length) return;
-      const s = scenes[index];
-      const durasi = s.durasi || 4;
-      const aksen = s.warnaAksen || "#38bdf8";
-
-      if (mainTl) mainTl.kill();
-
+    function buildSceneDOM(s, idx, total) {
       const viewport = document.getElementById('viewport');
-      const camera = document.getElementById('camera');
+      const glow = document.getElementById('glow-orb');
       const stage = document.getElementById('stage');
-      const glow = document.getElementById('bg-glow');
-      const prog = document.getElementById('progress-line');
+      const prog = document.getElementById('progress-bar');
+      const aksen = s.aksen || "#38bdf8";
 
       viewport.style.background = s.bg || "#070a12";
       glow.style.background = aksen;
       prog.style.background = aksen;
-      document.getElementById('scene-idx').innerText = `SCENE 0${index + 1}/0${scenes.length}`;
+      document.getElementById('hud-scene').innerText = `SCENE 0${idx + 1}/0${total}`;
 
-      // Pecah kata untuk efek Masking Slide-Up khas Motion Canvas
       const words = (s.teksUtama || "").split(" ").filter(Boolean);
       const wordsHtml = words.map((w, i) => {
-        const isLast = i === words.length - 1;
-        return `<span class="word-mask"><span class="word-inner" style="color:${isLast ? aksen : '#ffffff'}">${w}</span></span>`;
+        const isHighlight = i === words.length - 1;
+        return `<span class="hf-word" data-idx="${i}" style="color:${isHighlight ? aksen : '#ffffff'}">${w}</span>`;
       }).join("");
 
-      // Bangun SVG Vektor Geometris (Cincin Radar, Garis Ukur, & Counter Angka)
       stage.innerHTML = `
-        <div class="mc-tag" style="border-left-color: ${aksen}; color: ${aksen}">${s.kategori || 'INFO'}</div>
-        
-        <div class="mc-graphic-box">
-          <svg class="mc-svg" viewBox="0 0 200 200">
-            <!-- Lingkaran Orbit Luar -->
-            <circle class="svg-ring-1" cx="100" cy="100" r="92" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="8 6" />
-            <!-- Lingkaran Progress Vektor yang Menggambar Sendiri -->
-            <circle class="svg-ring-draw" cx="100" cy="100" r="78" fill="none" stroke="${aksen}" stroke-width="4" stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="490" transform="rotate(-90 100 100)" />
-            <!-- Poligon/Bentuk Sains Dalam -->
-            <polygon class="svg-poly" points="100,28 162,64 162,136 100,172 38,136 38,64" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
-            <!-- Titik Orbit -->
-            <circle class="svg-dot" cx="100" cy="8" r="5" fill="${aksen}" />
+        <div class="hf-tag" id="el-tag" style="border-left-color:${aksen}; color:${aksen}">${s.kategori || 'INFO'}</div>
+        <div class="hf-visual">
+          <svg class="hf-svg" viewBox="0 0 200 200">
+            <circle id="svg-outer" cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="8 6" />
+            <circle id="svg-prog" cx="100" cy="100" r="76" fill="none" stroke="${aksen}" stroke-width="4" stroke-linecap="round" stroke-dasharray="477" stroke-dashoffset="477" transform="rotate(-90 100 100)" />
+            <polygon id="svg-poly" points="100,26 164,63 164,137 100,174 36,137 36,63" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1" />
           </svg>
-          <div class="mc-center-val">
-            <div class="mc-icon">${s.ikon || '⚡'}</div>
-            ${s.angkaTarget !== undefined ? `<div class="mc-stat" style="color:${aksen}"><span id="num-val">0</span>${s.satuan || ''}</div>` : ''}
+          <div class="hf-center">
+            <div class="hf-icon" id="el-icon">${s.ikon || '⚡'}</div>
+            <div class="hf-stat" style="color:${aksen}"><span id="el-num">0</span>${s.satuan || ''}</div>
           </div>
         </div>
-
-        <div class="mc-title-container">${wordsHtml}</div>
-
-        <div class="mc-sub-box">
-          <div class="mc-sub-text">${s.subTeks || ''}</div>
+        <div class="hf-title" id="el-title">${wordsHtml}</div>
+        <div class="hf-sub-card" id="el-sub">
+          <div class="hf-sub-text">${s.subTeks || ''}</div>
         </div>
       `;
 
-      // Reset posisi Kamera
-      gsap.set(camera, { scale: 1, x: 0, y: 0, rotation: 0 });
-      gsap.set("#bg-grid", { x: 0, y: 0 });
+      // Efek kilat transisi awal adegan
+      const flash = document.getElementById('flash-overlay');
+      flash.style.opacity = '0.28';
+      setTimeout(() => { flash.style.transition = 'opacity 0.35s ease'; flash.style.opacity = '0'; }, 30);
+    }
 
-      // Gerakan Kamera Virtual berkelanjutan selama scene berlangsung
-      gsap.to("#bg-grid", { x: -36, y: -36, duration: durasi, ease: "none" });
-      gsap.to(".svg-ring-1", { rotation: 120, transformOrigin: "50% 50%", duration: durasi, ease: "none" });
-      gsap.to(".svg-poly", { rotation: -90, transformOrigin: "50% 50%", duration: durasi, ease: "none" });
+    // Mesin Render Deterministik Frame-by-Frame (60 FPS)
+    function tick(now) {
+      const scenes = window.DATA_VIDEO || [];
+      if (!scenes.length) return;
 
-      if (s.efekKamera === "zoomIn") {
-        gsap.fromTo(camera, { scale: 0.92 }, { scale: 1.08, duration: durasi, ease: "power1.out" });
-      } else if (s.efekKamera === "zoomOut") {
-        gsap.fromTo(camera, { scale: 1.12 }, { scale: 0.96, duration: durasi, ease: "power1.out" });
-      } else if (s.efekKamera === "panRight") {
-        gsap.fromTo(camera, { x: -18, scale: 1.05 }, { x: 18, scale: 1.05, duration: durasi, ease: "sine.inOut" });
-      } else if (s.efekKamera === "shake") {
-        gsap.fromTo(camera, { scale: 0.95 }, { scale: 1.04, duration: durasi, ease: "none" });
-        // Efek Getaran Gempa pada Kamera
-        gsap.to(camera, { x: "random(-6, 6)", y: "random(-6, 6)", duration: 0.06, repeat: 12, yoyo: true, delay: 0.35 });
-      }
+      const s = scenes[sceneIdx];
+      const durasiMs = (s.durasi || 4) * 1000;
+      const elapsed = now - sceneStart;
+      const t = clamp(elapsed / durasiMs, 0, 1);
 
-      // TIMELINE PROSEDURAL MOTION CANVAS
-      mainTl = gsap.timeline({
-        onComplete: () => {
-          currentIdx = (currentIdx + 1) % scenes.length;
-          playScene(currentIdx);
+      // Update Jam HUD
+      const totalSec = ((now - globalStart) / 1000).toFixed(1);
+      document.getElementById('hud-clock').innerText = `00:${totalSec.padStart(4, '0')}`;
+      document.getElementById('progress-bar').style.width = `${t * 100}%`;
+
+      // 1. Pergerakan Kamera Virtual & Grid
+      const camera = document.getElementById('camera');
+      const grid = document.getElementById('bg-grid');
+      grid.style.transform = `translate(${-t * 36}px, ${-t * 36}px)`;
+
+      let camScale = 1;
+      let camX = 0;
+      let camY = 0;
+      if (s.kamera === "zoomIn") camScale = 0.92 + t * 0.14;
+      else if (s.kamera === "zoomOut") camScale = 1.12 - t * 0.14;
+      else if (s.kamera === "pan") { camScale = 1.05; camX = -15 + t * 30; }
+      else if (s.kamera === "shake") {
+        camScale = 0.96 + t * 0.08;
+        if (elapsed > 250 && elapsed < 950) {
+          camX = Math.sin(elapsed * 0.09) * 6;
+          camY = Math.cos(elapsed * 0.11) * 6;
         }
-      });
+      }
+      camera.style.transform = `translate(${camX}px, ${camY}px) scale(${camScale})`;
 
-      // Progress bar bawah
-      gsap.fromTo(prog, { width: "0%" }, { width: "100%", duration: durasi, ease: "none" });
+      // 2. Animasi Vektor SVG & Counter Angka
+      const svgOuter = document.getElementById('svg-outer');
+      const svgPoly = document.getElementById('svg-poly');
+      const svgProg = document.getElementById('svg-prog');
+      if (svgOuter) svgOuter.style.transform = `rotate(${elapsed * 0.04}deg)`;
+      if (svgOuter) svgOuter.style.transformOrigin = '100px 100px';
+      if (svgPoly) svgPoly.style.transform = `rotate(${-elapsed * 0.03}deg)`;
+      if (svgPoly) svgPoly.style.transformOrigin = '100px 100px';
 
-      // 1. Tag Masuk
-      mainTl.from(".mc-tag", { y: -25, opacity: 0, scale: 0.8, duration: 0.45, ease: "back.out(2)" }, 0);
+      const drawProgress = easeOutCubic(clamp(elapsed / 1100, 0, 1));
+      if (svgProg) svgProg.style.strokeDashoffset = 477 - (477 * 0.82 * drawProgress);
 
-      // 2. Lingkaran Vektor Menggambar Sendiri (Stroke Dashoffset) + Ikon Memantul
-      mainTl.to(".svg-ring-draw", { strokeDashoffset: 80, duration: 1.1, ease: "power3.out" }, 0.1);
-      mainTl.from(".mc-icon", { scale: 0, rotation: -35, duration: 0.65, ease: "elastic.out(1.1, 0.5)" }, 0.15);
-
-      // 3. Animasi Angka Berjalan Cepat (Number Counter)
-      if (s.angkaTarget !== undefined) {
-        let counterObj = { val: 0 };
-        mainTl.to(counterObj, {
-          val: s.angkaTarget,
-          duration: 1.0,
-          ease: "power2.out",
-          onUpdate: () => {
-            const el = document.getElementById("num-val");
-            if (el) el.innerText = Math.round(counterObj.val);
-          }
-        }, 0.25);
+      const numEl = document.getElementById('el-num');
+      if (numEl && s.angka !== undefined) {
+        numEl.innerText = Math.round(s.angka * drawProgress);
       }
 
-      // 4. Judul Muncul dari Balik Masking (Kinetic Reveal)
-      mainTl.from(".word-inner", {
-        yPercent: 120,
-        rotateZ: 6,
-        duration: 0.55,
-        stagger: 0.07,
-        ease: "power4.out"
-      }, 0.25);
+      // 3. Animasi Masuk & Keluar Elemen (Spring Physics)
+      const exitPhase = clamp((elapsed - (durasiMs - 380)) / 380, 0, 1);
+      const exitScale = 1 - exitPhase * 0.15;
+      const exitOpacity = 1 - exitPhase;
 
-      // 5. Kotak Subteks Membuka
-      mainTl.from(".mc-sub-box", {
-        y: 30,
-        opacity: 0,
-        scale: 0.92,
-        duration: 0.55,
-        ease: "power3.out"
-      }, 0.55);
-
-      // 6. Transisi Keluar Prosedural (Semua Elemen Menyusut + Kamera Whip)
-      const exitStart = Math.max(1.2, durasi - 0.45);
-      mainTl.to(["#stage > *"], {
-        y: -30,
-        opacity: 0,
-        scale: 0.9,
-        stagger: 0.04,
-        duration: 0.35,
-        ease: "power2.in"
-      }, exitStart);
-    }
-
-    function applyAndPlay() {
-      try {
-        const raw = document.getElementById('json-input').value;
-        window.DATA_VIDEO = eval('(' + raw + ')');
-        currentIdx = 0;
-        startTime = Date.now();
-        playScene(0);
-      } catch (e) {
-        alert("Format JSON kurang tepat. Pastikan tanda kurung dan komanya sesuai!");
+      const tagEl = document.getElementById('el-tag');
+      if (tagEl) {
+        const p = easeOutBack(clamp(elapsed / 450, 0, 1));
+        tagEl.style.opacity = clamp(elapsed / 250, 0, 1) * exitOpacity;
+        tagEl.style.transform = `translateY(${(1 - p) * -25}px) scale(${p * exitScale})`;
       }
-    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      playScene(0);
-    });
-  </script>
-</body>
-</html>
+      const iconEl = document.getElementById('el-icon');
+      if (iconEl) {
+        const p = easeOutBack(clamp((elapsed - 80) / 550, 0, 1));
+        const floatY = Math.sin(elapsed * 0.004) * 6;
+        iconEl.style.opacity = clamp((elapsed - 80) / 200, 0, 1) * exitOpacity;
+        iconEl.style.transform = `translateY(${floatY}px) scale(${p * exitScale})`;
+      }
+
+      const words = document.querySelectorAll('.hf-word');
+      words.forEach((w, i) => {
+        const delay = 180 + i * 75;
+        const p = easeOutBack(clamp((elapsed - delay) / 500, 0, 1));
+        const op = clamp((elapsed - delay) / 220, 0, 1)
