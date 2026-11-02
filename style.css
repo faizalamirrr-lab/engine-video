@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800;900&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #090a0f;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* Kanvas Rasio 9:16 (Shorts/Reels/TikTok) */
+#canvas-9-16 {
+  width: 360px;
+  height: 640px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 28px;
+  transition: background 0.5s ease, color 0.4s ease;
+}
+
+/* Elemen Visual di Dalam Adegan */
+.badge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.15);
+  margin-bottom: 20px;
+  animation: fadeDown 0.4s ease forwards;
+}
+
+.ikon {
+  font-size: 84px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+}
+
+.judul {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.subteks {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+/* Progress Bar di Bawah Video */
+#progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6px;
+  background: rgba(255,255,255,0.8);
+  width: 0%;
+}
+
+/* Tombol Kontrol Replay di Luar Kanvas */
+.controls {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  background: #1e293b;
+  color: #fff;
+  border: 1px solid #334155;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.btn:hover { background: #334155; }
+
+/* Kumpulan Efek Animasi Siap Pakai */
+.anim-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.anim-slide { animation: slideUp 0.45s ease-out forwards; }
+.anim-zoom { animation: zoomOut 0.5s ease-out forwards; }
+.anim-shake { animation: shake 0.5s ease-in-out forwards; }
+
+@keyframes popIn { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes slideUp { 0% { transform: translateY(40px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes zoomOut { 0% { transform: scale(1.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes fadeDown { 0% { transform: translateY(-20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
