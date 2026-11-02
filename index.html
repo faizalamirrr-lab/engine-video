@@ -457,4 +457,121 @@
             <!-- Lingkaran Progress Vektor yang Menggambar Sendiri -->
             <circle class="svg-ring-draw" cx="100" cy="100" r="78" fill="none" stroke="${aksen}" stroke-width="4" stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="490" transform="rotate(-90 100 100)" />
             <!-- Poligon/Bentuk Sains Dalam -->
-            <polygon class="svg-poly" points="100,28 162,64 162,136
+            <polygon class="svg-poly" points="100,28 162,64 162,136 100,172 38,136 38,64" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+            <!-- Titik Orbit -->
+            <circle class="svg-dot" cx="100" cy="8" r="5" fill="${aksen}" />
+          </svg>
+          <div class="mc-center-val">
+            <div class="mc-icon">${s.ikon || '⚡'}</div>
+            ${s.angkaTarget !== undefined ? `<div class="mc-stat" style="color:${aksen}"><span id="num-val">0</span>${s.satuan || ''}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="mc-title-container">${wordsHtml}</div>
+
+        <div class="mc-sub-box">
+          <div class="mc-sub-text">${s.subTeks || ''}</div>
+        </div>
+      `;
+
+      // Reset posisi Kamera
+      gsap.set(camera, { scale: 1, x: 0, y: 0, rotation: 0 });
+      gsap.set("#bg-grid", { x: 0, y: 0 });
+
+      // Gerakan Kamera Virtual berkelanjutan selama scene berlangsung
+      gsap.to("#bg-grid", { x: -36, y: -36, duration: durasi, ease: "none" });
+      gsap.to(".svg-ring-1", { rotation: 120, transformOrigin: "50% 50%", duration: durasi, ease: "none" });
+      gsap.to(".svg-poly", { rotation: -90, transformOrigin: "50% 50%", duration: durasi, ease: "none" });
+
+      if (s.efekKamera === "zoomIn") {
+        gsap.fromTo(camera, { scale: 0.92 }, { scale: 1.08, duration: durasi, ease: "power1.out" });
+      } else if (s.efekKamera === "zoomOut") {
+        gsap.fromTo(camera, { scale: 1.12 }, { scale: 0.96, duration: durasi, ease: "power1.out" });
+      } else if (s.efekKamera === "panRight") {
+        gsap.fromTo(camera, { x: -18, scale: 1.05 }, { x: 18, scale: 1.05, duration: durasi, ease: "sine.inOut" });
+      } else if (s.efekKamera === "shake") {
+        gsap.fromTo(camera, { scale: 0.95 }, { scale: 1.04, duration: durasi, ease: "none" });
+        // Efek Getaran Gempa pada Kamera
+        gsap.to(camera, { x: "random(-6, 6)", y: "random(-6, 6)", duration: 0.06, repeat: 12, yoyo: true, delay: 0.35 });
+      }
+
+      // TIMELINE PROSEDURAL MOTION CANVAS
+      mainTl = gsap.timeline({
+        onComplete: () => {
+          currentIdx = (currentIdx + 1) % scenes.length;
+          playScene(currentIdx);
+        }
+      });
+
+      // Progress bar bawah
+      gsap.fromTo(prog, { width: "0%" }, { width: "100%", duration: durasi, ease: "none" });
+
+      // 1. Tag Masuk
+      mainTl.from(".mc-tag", { y: -25, opacity: 0, scale: 0.8, duration: 0.45, ease: "back.out(2)" }, 0);
+
+      // 2. Lingkaran Vektor Menggambar Sendiri (Stroke Dashoffset) + Ikon Memantul
+      mainTl.to(".svg-ring-draw", { strokeDashoffset: 80, duration: 1.1, ease: "power3.out" }, 0.1);
+      mainTl.from(".mc-icon", { scale: 0, rotation: -35, duration: 0.65, ease: "elastic.out(1.1, 0.5)" }, 0.15);
+
+      // 3. Animasi Angka Berjalan Cepat (Number Counter)
+      if (s.angkaTarget !== undefined) {
+        let counterObj = { val: 0 };
+        mainTl.to(counterObj, {
+          val: s.angkaTarget,
+          duration: 1.0,
+          ease: "power2.out",
+          onUpdate: () => {
+            const el = document.getElementById("num-val");
+            if (el) el.innerText = Math.round(counterObj.val);
+          }
+        }, 0.25);
+      }
+
+      // 4. Judul Muncul dari Balik Masking (Kinetic Reveal)
+      mainTl.from(".word-inner", {
+        yPercent: 120,
+        rotateZ: 6,
+        duration: 0.55,
+        stagger: 0.07,
+        ease: "power4.out"
+      }, 0.25);
+
+      // 5. Kotak Subteks Membuka
+      mainTl.from(".mc-sub-box", {
+        y: 30,
+        opacity: 0,
+        scale: 0.92,
+        duration: 0.55,
+        ease: "power3.out"
+      }, 0.55);
+
+      // 6. Transisi Keluar Prosedural (Semua Elemen Menyusut + Kamera Whip)
+      const exitStart = Math.max(1.2, durasi - 0.45);
+      mainTl.to(["#stage > *"], {
+        y: -30,
+        opacity: 0,
+        scale: 0.9,
+        stagger: 0.04,
+        duration: 0.35,
+        ease: "power2.in"
+      }, exitStart);
+    }
+
+    function applyAndPlay() {
+      try {
+        const raw = document.getElementById('json-input').value;
+        window.DATA_VIDEO = eval('(' + raw + ')');
+        currentIdx = 0;
+        startTime = Date.now();
+        playScene(0);
+      } catch (e) {
+        alert("Format JSON kurang tepat. Pastikan tanda kurung dan komanya sesuai!");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      playScene(0);
+    });
+  </script>
+</body>
+</html>
