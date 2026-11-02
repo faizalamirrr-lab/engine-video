@@ -3,38 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio Preview Video 9:16</title>
+  <title>Studio Preview Video Kompleks 9:16</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Perbaikan agar tidak terpotong & tambahan panel input */
-    body { flex-direction: row !important; gap: 24px; overflow: auto !important; padding: 20px; }
-    #panel-input { width: 320px; background: #1e293b; padding: 16px; border-radius: 12px; color: #fff; display: flex; flex-direction: column; gap: 10px; }
-    #panel-input h3 { font-size: 14px; color: #38bdf8; }
-    textarea { width: 100%; height: 380px; background: #0f172a; color: #4ade80; border: 1px solid #334155; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 12px; resize: none; }
-    .btn-apply { background: #2563eb; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 800; cursor: pointer; }
-    .btn-apply:hover { background: #1d4ed8; }
-    .player-area { display: flex; flex-direction: column; align-items: center; }
-  </style>
 </head>
 <body>
 
-  <!-- Panel Kiri: Tempat Paste Kode dari Claude/GPT -->
   <div id="panel-input">
-    <h3>📋 Paste Array Adegan dari Claude/GPT:</h3>
+    <h3>📋 Array Adegan Kompleks:</h3>
     <textarea id="json-input"></textarea>
     <button class="btn-apply" onclick="updateVideo()">▶️ Terapkan & Putar Video</button>
   </div>
 
-  <!-- Panel Kanan: Layar Video 9:16 -->
   <div class="player-area">
     <div id="canvas-9-16"></div>
   </div>
 
   <script>
-    // Adegan Default
     window.DATA_VIDEO = [
-      { durasi: 2.5, bg: "linear-gradient(135deg, #0f172a, #1e3a8a)", warnaJudul: "#38bdf8", warnaTeks: "#ffffff", kategori: "WHAT IF SAINS", ikon: "🌍", teksUtama: "BUMI KEHILANGAN OKSIGEN 5 DETIK?", subTeks: "Bukan cuma soal napas, ini yang akan hancur seketika!", animasi: "pop" },
-      { durasi: 3.0, bg: "linear-gradient(135deg, #450a0a, #7f1d1d)", warnaJudul: "#facc15", warnaTeks: "#ffffff", kategori: "DETIK KE-1", ikon: "🏢", teksUtama: "GEDUNG BETON RUNTUH SEKETIKA", subTeks: "Oksigen adalah pengikat utama struktur beton di seluruh dunia.", animasi: "shake" }
+      { durasi: 3.0, bg: "linear-gradient(135deg, #0f172a, #1e3a8a)", warnaJudul: "#38bdf8", warnaTeks: "#ffffff", kategori: "WHAT IF SAINS", ikon: "🌍", teksUtama: "BUMI TANPA OKSIGEN 5 DETIK?", subTeks: "Bukan cuma soal napas, ini yang hancur seketika!" }
     ];
 
     document.getElementById('json-input').value = JSON.stringify(window.DATA_VIDEO, null, 2);
@@ -42,11 +28,11 @@
     function updateVideo() {
       try {
         const raw = document.getElementById('json-input').value;
-        window.DATA_VIDEO = eval(raw); // Membaca array JS atau JSON
+        window.DATA_VIDEO = eval('(' + raw + ')');
         currentScene = 0;
         renderScene(0);
       } catch (e) {
-        alert("Format kode adegan kurang tepat, pastikan diawali [ dan diakhiri ]");
+        alert("Format JSON keliru, pastikan tanda kurung siku dan komanya benar!");
       }
     }
   </script>
