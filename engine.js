@@ -1,3 +1,70 @@
+window.DATA_VIDEO = [
+  {
+    durasi: 6,
+    kategori: "WHAT IF SCIENCE",
+    warnaJudul: "#38bdf8",
+    bg: "linear-gradient(135deg, #0b1b3a, #1d4e89)",
+    ikon: `<svg viewBox="0 0 120 120" width="110" height="110">
+      <circle cx="60" cy="60" r="52" fill="#0f172a" stroke="#38bdf8" stroke-width="6"/>
+      <text x="60" y="76" text-anchor="middle" fill="#ff8c24" font-size="44" font-weight="900">5s</text>
+    </svg>`,
+    teksUtama: "WHAT IF EARTH LOST OXYGEN?",
+    subTeks: "Hold your breath for five seconds. Easy, right? But Earth with zero percent oxygen is instantly fatal."
+  },
+  {
+    durasi: 7,
+    kategori: "FACT #1 • STRUCTURES",
+    warnaJudul: "#ff8c24",
+    bg: "linear-gradient(135deg, #1a1a2e, #5a2f2a)",
+    ikon: `<svg viewBox="0 0 120 120" width="110" height="110">
+      <polygon points="60,12 105,35 60,58 15,35" fill="#e2e8f0"/>
+      <polygon points="15,35 60,58 60,108 15,85" fill="#94a3b8"/>
+      <polygon points="105,35 60,58 60,108 105,85" fill="#64748b"/>
+      <circle cx="35" cy="98" r="5" fill="#ff8c24"/>
+      <circle cx="85" cy="95" r="4" fill="#ff8c24"/>
+    </svg>`,
+    teksUtama: "CONCRETE TURNS INTO DUST!",
+    subTeks: "Oxygen acts as a chemical glue. Without it, every concrete building, bridge, and dam instantly crumbles."
+  },
+  {
+    durasi: 8,
+    kategori: "FACT #2 • ATMOSPHERE",
+    warnaJudul: "#c084fc",
+    bg: "linear-gradient(135deg, #02030a, #1e1b4b)",
+    ikon: `<svg viewBox="0 0 120 120" width="110" height="110">
+      <circle cx="60" cy="60" r="36" fill="#fde047"/>
+      <path d="M 15 95 Q 60 65 105 95" stroke="#c084fc" stroke-width="6" stroke-dasharray="8 6" fill="none"/>
+    </svg>`,
+    teksUtama: "DAYTIME SKY GOES BLACK!",
+    subTeks: "With fewer particles to scatter light, the sky turns pitch black while the ozone vanishes, cooking bare skin with UV rays."
+  },
+  {
+    durasi: 8,
+    kategori: "FACT #3 • PRESSURE",
+    warnaJudul: "#f43f5e",
+    bg: "linear-gradient(135deg, #0a1128, #3b0764)",
+    ikon: `<svg viewBox="0 0 120 120" width="110" height="110">
+      <polygon points="20,65 105,35 75,95 55,72" fill="#f8fafc"/>
+      <polygon points="20,65 55,72 45,90" fill="#f43f5e"/>
+    </svg>`,
+    teksUtama: "AIR PRESSURE DROPS -21%!",
+    subTeks: "Everyone's inner ear explodes from the sudden pressure drop, and every combustion engine stalls in mid-air."
+  },
+  {
+    durasi: 7,
+    kategori: "FINAL CLIMAX",
+    warnaJudul: "#facc15",
+    bg: "linear-gradient(135deg, #1b0f0a, #4a2a14)",
+    ikon: `<svg viewBox="0 0 120 120" width="110" height="110">
+      <polygon points="60,20 110,50 60,80 10,50" fill="#ca8a04"/>
+      <polygon points="10,50 60,80 60,105 10,75" fill="#a16207"/>
+      <polygon points="110,50 60,80 60,105 110,75" fill="#713f12"/>
+      <polyline points="35,45 60,60 80,42" stroke="#090d16" stroke-width="5" fill="none"/>
+    </svg>`,
+    teksUtama: "EARTH'S CRUST IS 45% OXYGEN!",
+    subTeks: "Even the ground beneath your feet crumbles away. Five seconds is all it takes to erase civilization."
+  }
+];
 let currentScene = 0;
 let sceneTimer = null;
 let exitTimer = null;
